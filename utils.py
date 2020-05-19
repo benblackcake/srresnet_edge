@@ -54,8 +54,8 @@ def get_batch_image(batch_folder_path):
 
 	for image in train_file:
 		image = modcrop(cv2.imread(image,cv2.IMREAD_UNCHANGED))
-		print(image.shape)
-		image_li.append(modcrop(cv2.imread(image,cv2.IMREAD_UNCHANGED)))
+		# print(image.shape)
+		image_li.append(image)
 	# print(train_file)
 	return image_li
 

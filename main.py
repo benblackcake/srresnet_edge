@@ -15,7 +15,7 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--batch-size', type=int, default=16, help='Mini-batch size.')
 	parser.add_argument('--learning-rate', type=float, default=1e-4, help='Learning rate for Adam.')
-    parser.add_argument('--train-dir', type=str, help='Directory containing training images')
+	parser.add_argument('--train-dir', type=str, help='Directory containing training images')
 	parser.add_argument('--image-size', type=int, default=96, help='Size of random crops used for training samples.')
 	parser.add_argument('--epoch', type=int, default='100', help='How many iterations ')
 	parser.add_argument('--log-freq', type=int, default=10000, help='How many training iterations between validation/checkpoints.')
@@ -32,7 +32,7 @@ def main():
 	"""
 	# t_path = "D://code_IMP//python//tmp//np_test//output"
 	t_path = str(args.train_dir)
-	
+
 	x = tf.Variable(tf.random_normal([128,33, 33, 3], stddev=1e-3), name='x_LR')
 	x_edge = tf.Variable(tf.random_normal([128,33, 33, 1], stddev=1e-3), name='x_LR_edge')
 
@@ -84,14 +84,16 @@ def main():
 		load(sess,saver,'checkpoint')
 
 
-		""" To validate Benchmarks"""
 		if args.is_val:
+			""" To validate Benchmarks"""
+
 			for benchmark in benchmarks:
 				psnr, ssim, _, _ = benchmark.eval(sess, x_H, x_edge, iterator)
 				print(' [%s] PSNR: %.2f, SSIM: %.4f' % (benchmark.name, psnr, ssim), end='')
 
-		""" To Training """
 		else:
+			""" To Training """
+			
 			for epoch in range(args.epoch):
 				file_pathes = get_batch_folder_list(t_path)
 				t = tqdm(range(len(file_pathes)), bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}', desc='Iterations')
