@@ -1,6 +1,6 @@
 
 
-from srresnet_edge import *
+from srresnet_edge import SRresnetEdge
 import tensorflow as tf
 import argparse
 from utils import *
@@ -56,13 +56,18 @@ def main():
 	print(lr_edge)
 
 
-	x_H, x_edge = foward(lr_, lr_edge)
+	sr_resnet_edge = SRresnetEdge()
+	x_H, x_edge = sr_resnet_edge.foward(lr_, lr_edge)
 
-	edgeLoss = edge_loss(hr_edge, x_edge)
-	rectLoss = rect_loss(hr_, x_H)
-	totalLoss = total_loss(edgeLoss, rectLoss)
+	edgeLoss = sr_resnet_edge.edge_loss(hr_edge, x_edge)
+	rectLoss = sr_resnet_edge.rect_loss(hr_, x_H)
+	print('__DEBUG__')
+	print(edgeLoss)
+	print(rectLoss)
+	totalLoss = sr_resnet_edge.total_loss(edgeLoss, rectLoss)
 
-	totalLoss_opt = optimizer(totalLoss)
+
+	totalLoss_opt = sr_resnet_edge.optimizer(totalLoss)
 
 
 	benchmarks = [
@@ -93,7 +98,7 @@ def main():
 
 		else:
 			""" To Training """
-			
+
 			for epoch in range(args.epoch):
 				file_pathes = get_batch_folder_list(t_path)
 				t = tqdm(range(len(file_pathes)), bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}', desc='Iterations')
