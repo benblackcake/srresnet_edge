@@ -83,8 +83,8 @@ def load(sess,saver,checkpoint_dir):
 	To load the checkpoint use to test or pretrain
 	"""
 	print("\nReading Checkpoints.....\n\n")
-	model_dir = "%s" % ("srEdge")# give the model name by label_size
-	checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
+	# model_dir = "%s" % ("srEdge")# give the model name by label_size
+	# checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
 	ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
 
 	# Check the checkpoint is exist 
@@ -92,6 +92,7 @@ def load(sess,saver,checkpoint_dir):
 		ckpt_path = str(ckpt.model_checkpoint_path) # convert the unicode to string
 		saver.restore(sess, os.path.join(os.getcwd(), ckpt_path))
 		print("\n Checkpoint Loading Success! %s\n\n"% ckpt_path)
+		return ckpt_path
 	else:
 		print("\n! Checkpoint Loading Failed \n\n")
 
@@ -99,11 +100,11 @@ def save(sess,saver,checkpoint_dir, step):
 	"""
 	To save the checkpoint use to test or pretrain
 	"""
-	model_name = "srEdge.model"
+	model_name = "weights"
 	model_dir = "%s" % ("srEdge")
 	checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
 
 	if not os.path.exists(checkpoint_dir):
 		os.makedirs(checkpoint_dir)
 
-	saver.save(sess, os.path.join(checkpoint_dir, model_name), global_step=step)
+	saver.save(sess, os.path.join(checkpoint_dir, model_name), global_step=step, write_meta_graph=False)

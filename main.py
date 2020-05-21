@@ -13,6 +13,7 @@ from benchmark import Benchmark
 
 def main():
 	parser = argparse.ArgumentParser()
+	parser.add_argument('--load', type=str, help='Checkpoint to load all weights from.')
 	parser.add_argument('--batch-size', type=int, default=16, help='Mini-batch size.')
 	parser.add_argument('--learning-rate', type=float, default=1e-4, help='Learning rate for Adam.')
 	parser.add_argument('--train-dir', type=str, help='Directory containing training images')
@@ -83,10 +84,13 @@ def main():
 		sess.run(tf.global_variables_initializer())
 		# print(get_batch_folder_list(t_path))
 		# print(iter(get_batch_folder_list(t_path)))
-		saver = tf.train.Saver()
-
 		iterator = 0
-		load(sess,saver,'checkpoint')
+		saver = tf.train.Saver(max_to_keep=10)
+
+		if args.load:
+			# iterator = int(args.load.split('-')[-1])
+			# saver.restore(sess, args.load)
+			iterator = int(load(sess,saver, args.load).split('-')[-1])
 
 
 		if args.is_val:
@@ -131,7 +135,7 @@ def main():
 					_,err = sess.run([totalLoss_opt,totalLoss], feed_dict={hr_:hr_img_batch,hr_edge:hr_edges_map,
 													   lr_:lr_img_batch,lr_edge:lr_edges_map})
 
-					t.set_description("[Iters: %s][Error: %.4f]" %(epoch,err))
+					t.set_description("[Eopch: %s][[Iter: %s]][Error: %.4f]" %(epoch, iterator, err))
 
 					if iterator%args.log_freq == 0:
 						save(sess,saver,'checkpoint',iterator)
