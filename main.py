@@ -93,7 +93,7 @@ def main():
 			""" To validate Benchmarks"""
 
 			for benchmark in benchmarks:
-				psnr, ssim, _, _ = benchmark.eval(sess, x_H, x_edge, iterator)
+				psnr, ssim, _, _ = benchmark.eval(sess, x_H, x_edge, log_path='results', iteration=iterator)
 				print(' [%s] PSNR: %.2f, SSIM: %.4f' % (benchmark.name, psnr, ssim), end='')
 
 		else:
@@ -131,7 +131,7 @@ def main():
 					_,err = sess.run([totalLoss_opt,totalLoss], feed_dict={hr_:hr_img_batch,hr_edge:hr_edges_map,
 													   lr_:lr_img_batch,lr_edge:lr_edges_map})
 
-					t.set_description("[Iters: %s][Error: %.4f]" %(iterator,err))
+					t.set_description("[Iters: %s][Error: %.4f]" %(epoch,err))
 
 					if iterator%args.log_freq == 0:
 						save(sess,saver,'checkpoint',iterator)
