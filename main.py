@@ -19,7 +19,7 @@ def main():
 	parser.add_argument('--train-dir', type=str, help='Directory containing training images')
 	parser.add_argument('--image-size', type=int, default=96, help='Size of random crops used for training samples.')
 	parser.add_argument('--epoch', type=int, default='100', help='How many iterations ')
-	parser.add_argument('--log-freq', type=int, default=10000, help='How many training iterations between validation/checkpoints.')
+	parser.add_argument('--log-freq', type=int, default=1000, help='How many training iterations between validation/checkpoints.')
 	parser.add_argument('--is-val', action='store_true', help='True for evaluate image')
 	parser.add_argument('--gpu', type=str, default='0', help='Which GPU to use')
 
