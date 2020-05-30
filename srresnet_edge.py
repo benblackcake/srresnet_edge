@@ -24,6 +24,8 @@ class SRresnetEdge:
 	    x = tf.nn.relu(x)
 	    x = tf.nn.conv2d(x, weights['w2'], strides=[1,1,1,1], padding='SAME')
 	    # x = tf.layers.batch_normalization(x)
+	    x = tf.nn.relu(x)
+	    
 	    x = x + skip
 	    return x
 
