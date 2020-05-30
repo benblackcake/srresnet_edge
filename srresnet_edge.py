@@ -25,7 +25,7 @@ class SRresnetEdge:
 	    x = tf.nn.conv2d(x, weights['w2'], strides=[1,1,1,1], padding='SAME')
 	    # x = tf.layers.batch_normalization(x)
 	    x = tf.nn.relu(x)
-	    
+
 	    x = x + skip
 	    return x
 
@@ -125,7 +125,7 @@ class SRresnetEdge:
 
 	def total_loss(self, rect_loss, edge_loss):
 		""" Not sure about joint loss  """
-		return  (rect_loss + 1 * edge_loss)
+		return tf.reduce_mean(tf.square(rect_loss + 1 * edge_loss))
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
