@@ -42,7 +42,7 @@ class SRresnetEdge:
 		return x
 
 
-	def foward(self, x_in, x_edge, b_block=16):
+	def foward(self, x_in, x_edge, b_block=8):
 
 		# y_concate = x
 		print(x_in)
@@ -57,8 +57,15 @@ class SRresnetEdge:
 			# 'w_H': tf.Variable(tf.random_normal([3,3,68,1], stddev=1e-3), name='w_H')
 
 		}
+
+		biases = {
+			'b_in': tf.Variable(tf.zeros([64],name='b_in')),
+			'b_edge': tf.Variable(tf.zeros([4],name='b_edge')),
+			'b_rect': tf.Variable(tf.zeros([1],name='b_rect'))
+		}
+
 		print(x_concate)
-		x = tf.nn.conv2d(x_concate, weights['w_in'], strides=[1,1,1,1], padding='SAME', name='x_input')
+		x = tf.nn.conv2d(x_concate, weights['w_in'], strides=[1,1,1,1], padding='SAME', name='x_input') + biases['b_in']
 		x = tf.nn.relu(x, name='x_input')
 		skip = x
 		for i in range(b_block):
@@ -82,7 +89,7 @@ class SRresnetEdge:
 		# """
 		# x_output = tf.nn.conv2d(x_output, weights['w_out'], strides=[1,1,1,1], padding='SAME', name='f_out')
 		# x_output =  tf.nn.relu(x_output, name='x_output')
-		x_edge = tf.nn.conv2d(x_output, weights['w_edge'], strides=[1,1,1,1], padding='SAME', name='f_edge')
+		x_edge = tf.nn.conv2d(x_output, weights['w_edge'], strides=[1,1,1,1], padding='SAME', name='f_edge') + biases['b_edge']
 		x_edge = tf.nn.relu(x_edge, name='f_edge')
 
 		# print(x_output)
@@ -94,7 +101,7 @@ class SRresnetEdge:
 		x_rect = tf.concat([x_output,x_edge],axis=3, name='concate')
 		print(x_rect)
 
-		x_H_hat = tf.nn.conv2d(x_rect, weights['w_rect'], strides=[1,1,1,1], padding='SAME', name='f_rect')
+		x_H_hat = tf.nn.conv2d(x_rect, weights['w_rect'], strides=[1,1,1,1], padding='SAME', name='f_rect') + biases['b_rect']
 		x_H_hat = tf.nn.relu(x_H_hat, name='f_rect')
 		print(x_H_hat)
 
@@ -116,7 +123,7 @@ class SRresnetEdge:
 
 	def total_loss(self, rect_loss, edge_loss):
 		""" Not sure about joint loss  """
-		return  tf.reduce_mean(rect_loss + 1 * edge_loss)
+		return  (rect_loss + 1 * edge_loss)
 
 	def optimizer(self, loss):
 		return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
