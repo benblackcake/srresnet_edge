@@ -85,7 +85,7 @@ def main():
 		# print(get_batch_folder_list(t_path))
 		# print(iter(get_batch_folder_list(t_path)))
 		iterator = 0
-		saver = tf.train.Saver(max_to_keep=10)
+		saver = tf.train.Saver(max_to_keep=10,scope='sr_edge_net')
 
 		if args.load:
 			# iterator = int(args.load.split('-')[-1])

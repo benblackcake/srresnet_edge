@@ -57,7 +57,7 @@ class SRresnetEdge:
 	def recurrent_weight(self, k):
 		weights = {}
 		biases = {}
-
+		# with tf.variable_scope('sr_edge_net') as scope
 		for i in range(k):
 			weights.update({'w_in_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_in_%d'%(i))})
 			weights.update({'w_mid_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_mid_%d'%(i))})
