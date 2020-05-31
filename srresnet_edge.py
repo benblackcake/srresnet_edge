@@ -45,21 +45,22 @@ class SRresnetEdge:
 
 
 	def RecurrentBlock(self, x, k):
-		f_in = x
-		weight,biases = self.recurrent_weight(k)
+		f_k_in = x
+		weights,biases = self.recurrent_weight(k)
 		for i in range(k):
-			f_k_mid = tf.nn.conv2d(f_in, weights['w_in_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_in_%d'%(i)]
-			f_k = tf.nn.conv2d(f_k_mid, weights['w_mid_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_mid_%d'%(i)] + f_in
-		
-
+			f_k_mid = tf.nn.conv2d(f_k_in, weights['w_in_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_in_%d'%(i)]
+			f_k = tf.nn.conv2d(f_k_mid, weights['w_mid_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_mid_%d'%(i)] + f_k_in
+			f_k_in = f_k
+			print(weights['w_in_%d'%(i)])
+		return f_k_in
 
 	def recurrent_weight(self, k):
 		weights = {}
 		biases = {}
 
 		for i in range(k):
-			wwights.update({'w_in_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_in_%d'%(i))})
-			wwights.update({'w_mid_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_mid_%d'%(i))})
+			weights.update({'w_in_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_in_%d'%(i))})
+			weights.update({'w_mid_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_mid_%d'%(i))})
 			biases.update({'b_in_%d'%(i):tf.Variable(tf.zeros([64]),name='b_in_%d'%(i))})
 			biases.update({'b_mid_%d'%(i):tf.Variable(tf.zeros([64]),name='b_mid_%d'%(i))})
 
@@ -87,53 +88,50 @@ class SRresnetEdge:
 				'b_rect': tf.Variable(tf.zeros([1],name='b_rect'))
 			}
 
-			print(x_concate)
+			# print(x_concate)
 			x = tf.nn.conv2d(x_concate, weights['w_in'], strides=[1,1,1,1], padding='SAME', name='x_input') + biases['b_in']
 			x = tf.nn.relu(x, name='x_input')
 			skip = x
-			for i in range(b_block):
-				x = self.ResidualBlock(x, 3, 64)
-
+			x = self.RecurrentBlock(x,3)
+			# for i in range(b_block):
+			# 	x = self.ResidualBlock(x, 3, 64)
+			print('____DEBUG____')
+			print(x)
 			"""
 			f_output
 			"""
 
-			x = tf.nn.conv2d(x, weights['w_in_residual_out'], strides=[1,1,1,1], padding='SAME', name='w_in_residual_out')
-			x = tf.layers.batch_normalization(x)
+			x_output = tf.nn.conv2d(x, weights['w_in_residual_out'], strides=[1,1,1,1], padding='SAME', name='w_in_residual_out')
+			x_output = tf.nn.relu(x_output)
 
-			x_output = tf.math.add(x, skip, name='f_output')
-			# for i in range(1):
-			# 	x = Upsample2xBlock(x, kernel_size=3, filter_size=256)
+			# print(x_output)
 
-			print(x_output)
+			"""
+			f_edge
+			"""
 
-			# """
-			# f_edge
-			# """
-			# x_output = tf.nn.conv2d(x_output, weights['w_out'], strides=[1,1,1,1], padding='SAME', name='f_out')
-			# x_output =  tf.nn.relu(x_output, name='x_output')
 			x_edge = tf.nn.conv2d(x_output, weights['w_edge'], strides=[1,1,1,1], padding='SAME', name='f_edge') + biases['b_edge']
 			x_edge = tf.nn.relu(x_edge, name='f_edge')
 
 			# print(x_output)
-			print(x_edge)
+			# print(x_edge)
 			
-			# """
-			# f_rect
-			# """
+			"""
+			f_rect
+			"""
 			x_rect = tf.concat([x_output,x_edge],axis=3, name='concate')
-			print(x_rect)
+			# print(x_rect)
 
 			x_H_hat = tf.nn.conv2d(x_rect, weights['w_rect'], strides=[1,1,1,1], padding='SAME', name='f_rect') + biases['b_rect']
 			x_H_hat = tf.nn.relu(x_H_hat, name='f_rect')
-			print(x_H_hat)
+			# print(x_H_hat)
 
 			# #Here add have some problem
 			x_H = tf.math.add(x_H_hat, x_in, name='x_H_add')
 
 			# # print(x_concate)
 			# print(x_H)
-			print(x_H)
+			# print(x_H)
 			return x_H, x_edge
 
 
