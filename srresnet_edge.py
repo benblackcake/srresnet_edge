@@ -48,8 +48,8 @@ class SRresnetEdge:
 		f_k_in = x
 		weights,biases = self.recurrent_weight(k)
 		for i in range(k):
-			f_k_mid = tf.nn.conv2d(f_k_in, weights['w_in_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_in_%d'%(i)]
-			f_k = tf.nn.conv2d(f_k_mid, weights['w_mid_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_mid_%d'%(i)] + f_k_in
+			f_k_mid = tf.nn.relu(tf.nn.conv2d(f_k_in, weights['w_in_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_in_%d'%(i)])
+			f_k = tf.nn.relu(tf.nn.conv2d(f_k_mid, weights['w_mid_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_mid_%d'%(i)]) + f_k_in
 			f_k_in = f_k
 			print(weights['w_in_%d'%(i)])
 		return f_k_in
