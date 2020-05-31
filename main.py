@@ -91,7 +91,7 @@ def main():
 			# iterator = int(args.load.split('-')[-1])
 			# saver.restore(sess, args.load)
 			iterator ,sess = load(sess,saver, args.load)
-			iterator = iterator.split('-')[1]
+			iterator = int(iterator.split('-')[1])
 
 		if args.is_val:
 			""" To validate Benchmarks"""
