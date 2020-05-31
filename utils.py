@@ -92,7 +92,7 @@ def load(sess,saver,checkpoint_dir):
 		ckpt_path = str(ckpt.model_checkpoint_path) # convert the unicode to string
 		saver.restore(sess, os.path.join(os.getcwd(), ckpt_path))
 		print("\n Checkpoint Loading Success! %s\n\n"% ckpt_path)
-		return ckpt_path
+		return ckpt_path,sess
 	else:
 		print("\n! Checkpoint Loading Failed \n\n")
 

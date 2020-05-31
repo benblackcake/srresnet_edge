@@ -90,7 +90,7 @@ def main():
 		if args.load:
 			# iterator = int(args.load.split('-')[-1])
 			# saver.restore(sess, args.load)
-			iterator = int(load(sess,saver, args.load).split('-')[-1])
+			iterator ,sess = int(load(sess,saver, args.load).split('-')[-1])
 
 
 		if args.is_val:
