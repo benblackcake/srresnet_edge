@@ -44,6 +44,27 @@ class SRresnetEdge:
 		return x
 
 
+	def RecurrentBlock(self, x, k):
+		f_in = x
+		weight,biases = self.recurrent_weight(k)
+		for i in range(k):
+			f_k_mid = tf.nn.conv2d(f_in, weights['w_in_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_in_%d'%(i)]
+			f_k = tf.nn.conv2d(f_k_mid, weights['w_mid_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_mid_%d'%(i)] + f_in
+		
+
+
+	def recurrent_weight(self, k):
+		weights = {}
+		biases = {}
+
+		for i in range(k):
+			wwights.update({'w_in_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_in_%d'%(i))})
+			wwights.update({'w_mid_%d'%(i):tf.Variable(tf.random_normal([3,3,64,64],stddev=1e-3),name='w_mid_%d'%(i))})
+			biases.update({'b_in_%d'%(i):tf.Variable(tf.zeros([64]),name='b_in_%d'%(i))})
+			biases.update({'b_mid_%d'%(i):tf.Variable(tf.zeros([64]),name='b_mid_%d'%(i))})
+
+		return weights,biases
+
 	def foward(self, x_in, x_edge, b_block=8):
 		with tf.variable_scope('sr_edge_net') as scope:
 			# y_concate = x
