@@ -144,8 +144,8 @@ class SRresnetEdge:
 
 	def total_loss(self, rect_loss, edge_loss):
 		""" Not sure about joint loss  """
-		return tf.reduce_mean(tf.square(rect_loss + 1 * edge_loss))
-
+		return (rect_loss + 1 * edge_loss)
+		
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
 
