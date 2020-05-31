@@ -92,7 +92,7 @@ class SRresnetEdge:
 			x = tf.nn.conv2d(x_concate, weights['w_in'], strides=[1,1,1,1], padding='SAME', name='x_input') + biases['b_in']
 			x = tf.nn.relu(x, name='x_input')
 			skip = x
-			x = self.RecurrentBlock(x,3)
+			x = self.RecurrentBlock(x,16)
 			# for i in range(b_block):
 			# 	x = self.ResidualBlock(x, 3, 64)
 			print('____DEBUG____')
@@ -145,7 +145,7 @@ class SRresnetEdge:
 	def total_loss(self, rect_loss, edge_loss):
 		""" Not sure about joint loss  """
 		return (rect_loss + 1 * edge_loss)
-		
+
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
 
