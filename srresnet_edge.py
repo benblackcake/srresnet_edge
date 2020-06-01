@@ -140,15 +140,17 @@ class SRresnetEdge:
 			return  (y_HR_hat - y_predict)
 
 
-	def edge_loss(self, y_edge_HR_hat, y_predict):
-		with tf.variable_scope('sr_edge_net') as scope:
+	def rect_loss(self, y_HR_hat, y_predict_HR):
+		return  (tf.square(y_HR_hat - y_predict_HR))
 
-			return (y_edge_HR_hat - y_predict)
 
-	def total_loss(self, rect_loss, edge_loss):
-		with tf.variable_scope('sr_edge_net') as scope:
-			""" Not sure about joint loss  """
-			return tf.reduce_mean(tf.square(rect_loss)+ (self.weight_lamda * tf.square(edge_loss)))
+	def edge_loss(self, y_edge_HR_hat, y_predict_edge_HR):
+		return (tf.square(y_edge_HR_hat - y_predict_edge_HR))
+
+	def total_loss(self, y_HR_hat, y_predict_HR, y_edge_HR_hat, y_predict_edge_HR):
+		""" Not sure about joint loss  """
+		return tf.reduce_mean(tf.square(y_HR_hat - y_predict_HR)+
+			self.weight_lamda*(tf.square(tf.math.subtract(y_edge_HR_hat,y_predict_edge_HR))))
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
@@ -158,6 +160,5 @@ class SRresnetEdge:
 		# update_ops needs to be here for batch normalization to work
 		update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS, scope='sr_edge_net')
 		with tf.control_dependencies(update_ops):
-			return tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(loss, 
-				var_list=tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='sr_edge_net')
-				)
+			return tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(loss, var_list=tf.get_collection(
+				tf.GraphKeys.TRAINABLE_VARIABLES, scope='sr_edge_net'))
