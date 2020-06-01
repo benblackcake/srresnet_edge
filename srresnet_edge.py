@@ -4,10 +4,10 @@ import tensorflow as tf
 class SRresnetEdge:
 
 
-	def __init__(self):
+	def __init__(self,weight_lamda=1, learning_rate=1e-4):
 		""" Init class attr """
-		self.lamda = None
-		pass
+		self.learning_rate = learning_rate
+		self.weight_lamda = weight_lamda
 
 	def ResidualBlock(self, x, kernel_size, filter_size):
 	    """Residual block a la ResNet"""
@@ -146,7 +146,7 @@ class SRresnetEdge:
 
 	def total_loss(self, rect_loss, edge_loss):
 		""" Not sure about joint loss  """
-		return tf.reduce_mean((rect_loss + 1 * edge_loss))
+		return tf.reduce_mean((rect_loss + self.weight_lamda * edge_loss))
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
@@ -156,5 +156,5 @@ class SRresnetEdge:
 		# update_ops needs to be here for batch normalization to work
 		update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS, scope='sr_edge_net')
 		with tf.control_dependencies(update_ops):
-			return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss, var_list=tf.get_collection(
+			return tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(loss, var_list=tf.get_collection(
 				tf.GraphKeys.TRAINABLE_VARIABLES, scope='sr_edge_net'))

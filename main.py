@@ -57,7 +57,7 @@ def main():
 	print(lr_edge)
 
 
-	sr_resnet_edge = SRresnetEdge()
+	sr_resnet_edge = SRresnetEdge(weight_lamda=1, learning_rate=args.learning_rate)
 	x_H, x_edge = sr_resnet_edge.foward(lr_, lr_edge)
 
 	edgeLoss = sr_resnet_edge.edge_loss(hr_edge, x_edge)
@@ -135,7 +135,7 @@ def main():
 					_,err = sess.run([totalLoss_opt,totalLoss], feed_dict={hr_:hr_img_batch,hr_edge:hr_edges_map,
 													   lr_:lr_img_batch,lr_edge:lr_edges_map})
 
-					t.set_description("[Eopch: %s][[Iter: %s]][Error: %.4f]" %(epoch, iterator, err))
+					t.set_description("[Eopch: %s][Iter: %s][Error: %.4f]" %(epoch, iterator, err))
 
 					if iterator%args.log_freq == 0:
 						save(sess,saver,'checkpoint',iterator)
