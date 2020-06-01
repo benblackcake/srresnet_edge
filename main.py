@@ -135,7 +135,7 @@ def main():
 					_,err = sess.run([totalLoss_opt,totalLoss], feed_dict={hr_:hr_img_batch,hr_edge:hr_edges_map,
 													   lr_:lr_img_batch,lr_edge:lr_edges_map})
 
-					t.set_description("[Eopch: %s][[Iter: %s]][Error: %.4f]" %(epoch, iterator, err))
+					t.set_description("[Eopch: %s][Iter: %s][Error: %.4f]" %(epoch, iterator, err))
 
 					if iterator%args.log_freq == 0:
 						save(sess,saver,'checkpoint',iterator)
