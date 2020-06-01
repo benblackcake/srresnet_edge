@@ -20,6 +20,7 @@ def main():
 	parser.add_argument('--image-size', type=int, default=96, help='Size of random crops used for training samples.')
 	parser.add_argument('--epoch', type=int, default='100', help='How many iterations ')
 	parser.add_argument('--log-freq', type=int, default=1000, help='How many training iterations between validation/checkpoints.')
+	parser.add_argument('--block-n', type=int, default=16, help='How many recurenet blocks')
 	parser.add_argument('--is-val', action='store_true', help='True for evaluate image')
 	parser.add_argument('--gpu', type=str, default='0', help='Which GPU to use')
 
@@ -58,7 +59,7 @@ def main():
 
 
 	sr_resnet_edge = SRresnetEdge()
-	x_H, x_edge = sr_resnet_edge.foward(lr_, lr_edge)
+	x_H, x_edge = sr_resnet_edge.foward(lr_, lr_edge, b_block=args.block_n)
 
 	edgeLoss = sr_resnet_edge.edge_loss(hr_edge, x_edge)
 	rectLoss = sr_resnet_edge.rect_loss(hr_, x_H)
