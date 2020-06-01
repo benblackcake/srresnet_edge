@@ -146,8 +146,7 @@ class SRresnetEdge:
 
 	def total_loss(self, y_HR_hat, y_predict_HR, y_edge_HR_hat, y_predict_edge_HR):
 		""" Not sure about joint loss  """
-		return tf.reduce_mean(tf.square(y_HR_hat - y_predict_HR))+
-			self.weight_lamda*tf.reduce_mean(tf.square(y_edge_HR_hat - y_predict_edge_HR))
+		return tf.reduce_mean(tf.square(y_HR_hat - y_predict_HR))+self.weight_lamda*tf.reduce_mean(tf.square(y_edge_HR_hat - y_predict_edge_HR))
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
