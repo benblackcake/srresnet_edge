@@ -157,5 +157,6 @@ class SRresnetEdge:
 		# update_ops needs to be here for batch normalization to work
 		update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS, scope='sr_edge_net')
 		with tf.control_dependencies(update_ops):
-			return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss, var_list=tf.get_collection(
-				tf.GraphKeys.TRAINABLE_VARIABLES, scope='sr_edge_net'))
+			return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss, 
+				var_list=tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='sr_edge_net')
+				)
