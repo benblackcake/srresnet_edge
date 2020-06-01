@@ -10,24 +10,24 @@ class SRresnetEdge:
 		self.weight_lamda = weight_lamda
 
 	def ResidualBlock(self, x, kernel_size, filter_size):
-	    """Residual block a la ResNet"""
+		"""Residual block a la ResNet"""
 
-	    weights = {
-	            'w1': tf.Variable(tf.random_normal([kernel_size, kernel_size, filter_size, filter_size], stddev=1e-3), name='w1'),
-	            'w2': tf.Variable(tf.random_normal([kernel_size, kernel_size, filter_size, filter_size], stddev=1e-3), name='w2'),
-	            # 'w3': tf.Variable(tf.random_normal([3, 3, 32, self.c_dim], stddev=1e-3), name='w3')
-	        }
+		weights = {
+		    'w1': tf.Variable(tf.random_normal([kernel_size, kernel_size, filter_size, filter_size], stddev=1e-3), name='w1'),
+		    'w2': tf.Variable(tf.random_normal([kernel_size, kernel_size, filter_size, filter_size], stddev=1e-3), name='w2'),
+		    # 'w3': tf.Variable(tf.random_normal([3, 3, 32, self.c_dim], stddev=1e-3), name='w3')
+		}
 
-	    skip = x
-	    x = tf.nn.conv2d(x, weights['w1'], strides=[1,1,1,1], padding='SAME')
-	    x = tf.layers.batch_normalization(x)
-	    x = tf.nn.relu(x)
-	    x = tf.nn.conv2d(x, weights['w2'], strides=[1,1,1,1], padding='SAME')
-	    x = tf.nn.relu(x)
-	    x = tf.layers.batch_normalization(x)
+		skip = x
+		x = tf.nn.conv2d(x, weights['w1'], strides=[1,1,1,1], padding='SAME')
+		x = tf.layers.batch_normalization(x)
+		x = tf.nn.relu(x)
+		x = tf.nn.conv2d(x, weights['w2'], strides=[1,1,1,1], padding='SAME')
+		x = tf.nn.relu(x)
+		x = tf.layers.batch_normalization(x)
 
-	    x = x + skip
-	    return x
+		x = x + skip
+		return x
 
 	def Upsample2xBlock(self, x, kernel_size, filter_size):
 		weights = {
@@ -146,7 +146,9 @@ class SRresnetEdge:
 
 	def total_loss(self, y_HR_hat, y_predict_HR, y_edge_HR_hat, y_predict_edge_HR):
 		""" Not sure about joint loss  """
-		return tf.reduce_mean(tf.square(y_HR_hat - y_predict_HR))+self.weight_lamda*tf.reduce_mean(tf.square(y_edge_HR_hat - y_predict_edge_HR))
+		with tf.variable_scope('sr_edge_net') as scope:
+			return tf.reduce_mean(tf.square(y_HR_hat - y_predict_HR))+\
+			self.weight_lamda*tf.reduce_mean(tf.square(y_edge_HR_hat - y_predict_edge_HR))
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
