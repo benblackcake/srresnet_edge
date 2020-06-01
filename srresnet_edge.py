@@ -125,31 +125,29 @@ class SRresnetEdge:
 
 			x_H_hat = tf.nn.conv2d(x_rect, weights['w_rect'], strides=[1,1,1,1], padding='SAME', name='f_rect') + biases['b_rect']
 			x_H_hat = tf.nn.relu(x_H_hat, name='f_rect')
-			# print(x_H_hat)
+			print(x_H_hat)
 
 			# #Here add have some problem
 			x_H = tf.math.add(x_H_hat, x_in, name='x_H_add')
 
-			# # print(x_concate)
-			# print(x_H)
-			# print(x_H)
-			return x_H, x_edge
+			print(x_H)
+			return x_H, x_H_hat
 
 
 	def rect_loss(self, y_HR_hat, y_predict):
 		with tf.variable_scope('sr_edge_net') as scope:
-			return  tf.reduce_mean(tf.square(y_HR_hat - y_predict))
+			return  tf.square(y_HR_hat - y_predict)
 
 
 	def edge_loss(self, y_edge_HR_hat, y_predict):
 		with tf.variable_scope('sr_edge_net') as scope:
 
-			return tf.reduce_mean(tf.square(y_edge_HR_hat - y_predict))
+			return tf.square(y_edge_HR_hat - y_predict)
 
 	def total_loss(self, rect_loss, edge_loss):
 		with tf.variable_scope('sr_edge_net') as scope:
 			""" Not sure about joint loss  """
-			return (rect_loss + 1 * edge_loss)
+			return tf.reduce_mean(rect_loss + 1 * edge_loss)
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
