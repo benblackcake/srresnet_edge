@@ -4,10 +4,11 @@ import tensorflow as tf
 class SRresnetEdge:
 
 
-	def __init__(self):
+	def __init__(self,weight_lamda=1, learning_rate=1e-4):
 		""" Init class attr """
-		self.lamda = None
-		pass
+		self.learning_rate = learning_rate
+		self.weight_lamda = weight_lamda
+		
 
 	def ResidualBlock(self, x, kernel_size, filter_size):
 	    """Residual block a la ResNet"""
@@ -93,7 +94,7 @@ class SRresnetEdge:
 			x = tf.nn.conv2d(x_concate, weights['w_in'], strides=[1,1,1,1], padding='SAME', name='x_input') + biases['b_in']
 			x = tf.nn.relu(x, name='x_input')
 			skip = x
-			x = self.RecurrentBlock(x,16)
+			x = self.RecurrentBlock(x,b_block)
 			# for i in range(b_block):
 			# 	x = self.ResidualBlock(x, 3, 64)
 			print('____DEBUG____')
@@ -147,7 +148,7 @@ class SRresnetEdge:
 	def total_loss(self, rect_loss, edge_loss):
 		with tf.variable_scope('sr_edge_net') as scope:
 			""" Not sure about joint loss  """
-			return tf.reduce_mean(tf.square(rect_loss)+ (1 * tf.square(edge_loss)))
+			return tf.reduce_mean(tf.square(rect_loss)+ (self.weight_lamda * tf.square(edge_loss)))
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
@@ -157,6 +158,6 @@ class SRresnetEdge:
 		# update_ops needs to be here for batch normalization to work
 		update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS, scope='sr_edge_net')
 		with tf.control_dependencies(update_ops):
-			return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss, 
+			return tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(loss, 
 				var_list=tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='sr_edge_net')
 				)

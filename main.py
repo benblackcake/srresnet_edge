@@ -58,7 +58,7 @@ def main():
 	print(lr_edge)
 
 
-	sr_resnet_edge = SRresnetEdge()
+	sr_resnet_edge = SRresnetEdge(weight_lamda=1, learning_rate = args.learning_rate)
 	x_H, x_edge = sr_resnet_edge.foward(lr_, lr_edge, b_block=args.block_n)
 
 	edgeLoss = sr_resnet_edge.edge_loss(hr_edge, x_edge)
