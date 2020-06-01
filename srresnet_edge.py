@@ -67,7 +67,7 @@ class SRresnetEdge:
 
 		return weights,biases
 
-	def foward(self, x_in, x_edge, b_block=8):
+	def foward(self, x_in, x_edge, b_block=3):
 		with tf.variable_scope('sr_edge_net') as scope:
 			# y_concate = x
 			print(x_in)
