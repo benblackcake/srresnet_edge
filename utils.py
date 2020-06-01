@@ -27,6 +27,9 @@ def cany_oper_batch(batch):
 	return canyed
 
 def normalize_batch_img(batch):
+	"""normalize image to [-1,1] or [0,1]"""
+	lr = lr / 255.0
+	hr = (hr / 255.0) * 2.0 - 1.0
 	return batch/255.0
 
 def downsample(image, factor):

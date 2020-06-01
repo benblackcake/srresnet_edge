@@ -34,8 +34,8 @@ def main():
 	# t_path = "D://code_IMP//python//tmp//np_test//output"
 	t_path = str(args.train_dir)
 
-	x = tf.Variable(tf.random_normal([128,33, 33, 3], stddev=1e-3), name='x_LR')
-	x_edge = tf.Variable(tf.random_normal([128,33, 33, 1], stddev=1e-3), name='x_LR_edge')
+	# x = tf.Variable(tf.random_normal([128,33, 33, 3], stddev=1e-3), name='x_LR')
+	# x_edge = tf.Variable(tf.random_normal([128,33, 33, 1], stddev=1e-3), name='x_LR_edge')
 
 	"""
 	Image and Edge map placeholder
@@ -60,12 +60,12 @@ def main():
 	sr_resnet_edge = SRresnetEdge(weight_lamda=1, learning_rate=args.learning_rate)
 	x_H, x_edge = sr_resnet_edge.foward(lr_, lr_edge)
 
-	edgeLoss = sr_resnet_edge.edge_loss(hr_edge, x_edge)
-	rectLoss = sr_resnet_edge.rect_loss(hr_, x_H)
+	# edgeLoss = sr_resnet_edge.edge_loss(hr_edge, x_edge)
+	# rectLoss = sr_resnet_edge.rect_loss(hr_, x_H)
 	print('__DEBUG__')
-	print(edgeLoss)
-	print(rectLoss)
-	totalLoss = sr_resnet_edge.total_loss(edgeLoss, rectLoss)
+	# print(edgeLoss)
+	# print(rectLoss)
+	totalLoss = sr_resnet_edge.total_loss(hr_, x_H, hr_edge, x_edge)
 
 
 	totalLoss_opt = sr_resnet_edge.optimizer(totalLoss)
