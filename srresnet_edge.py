@@ -47,11 +47,12 @@ class SRresnetEdge:
 	def RecurrentBlock(self, x, k):
 		f_k_in = x
 		weights,biases = self.recurrent_weight(k)
+
 		for i in range(k):
 			f_k_mid = tf.nn.relu(tf.nn.conv2d(f_k_in, weights['w_in_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_in_%d'%(i)])
 			f_k = tf.nn.relu(tf.nn.conv2d(f_k_mid, weights['w_mid_%d'%(i)], strides=[1,1,1,1], padding='SAME') + biases['b_mid_%d'%(i)]) + f_k_in
 			f_k_in = f_k
-			print(weights['w_in_%d'%(i)])
+			print(f_k_in)
 		return f_k_in
 
 	def recurrent_weight(self, k):
@@ -136,15 +137,19 @@ class SRresnetEdge:
 
 
 	def rect_loss(self, y_HR_hat, y_predict):
-		return  tf.reduce_mean(tf.square(y_HR_hat - y_predict))
+		with tf.variable_scope('sr_edge_net') as scope:
+			return  tf.reduce_mean(tf.square(y_HR_hat - y_predict))
 
 
 	def edge_loss(self, y_edge_HR_hat, y_predict):
-		return tf.reduce_mean(tf.square(y_edge_HR_hat - y_predict))
+		with tf.variable_scope('sr_edge_net') as scope:
+
+			return tf.reduce_mean(tf.square(y_edge_HR_hat - y_predict))
 
 	def total_loss(self, rect_loss, edge_loss):
-		""" Not sure about joint loss  """
-		return (rect_loss + 1 * edge_loss)
+		with tf.variable_scope('sr_edge_net') as scope:
+			""" Not sure about joint loss  """
+			return (rect_loss + 1 * edge_loss)
 
 	# def optimizer(self, loss):
 	# 	return tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
